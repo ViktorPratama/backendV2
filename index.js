@@ -10,7 +10,6 @@ import notificationRoutes from './routes/notificationRoutes.js';
 dotenv.config();
 const app = express();
 
-// Validate if Supabase URL or Key is not available
 if (!process.env.SUPABASE_URL || !process.env.SUPABASE_KEY) {
   throw new Error('Missing SUPABASE_URL or SUPABASE_KEY in environment variables');
 }
@@ -19,27 +18,31 @@ const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY
 console.log('Supabase initialized:', supabase);
 
 app.use(cors({
-  origin: 'https://rantaucash.vercel.app',  // Corrected to remove the trailing slash
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Corrected to explicitly define allowed methods
-  allowedHeaders: ['Content-Type', 'Authorization'], // Corrected to define allowed headers
+  origin: 'https://rantaucash.vercel.app',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
 app.use(express.json());
 
-// Routes
+// Default Route
 app.get('/', (req, res) => {
   res.send('Welcome to the API!');
 });
+
+// Handle favicon.ico
+app.get('/favicon.ico', (req, res) => res.status(204));
+
+// API Routes
 app.use('/api/users', userRoutes(supabase));
 app.use('/api/payments', paymentRoutes(supabase));
 app.use('/api/rooms', roomsRoutes(supabase));
 app.use('/api', notificationRoutes(supabase));
 
-// Error handling middleware
+// Error Handling Middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).send('Something broke!');
 });
 
-// Export the Express app as a serverless function
 export default app;
