@@ -6,54 +6,9 @@ import { verifyToken } from '../middleware/authMiddleware.js';
 const userRoutes = (supabase) => {
   const router = express.Router();
 
-  // Register endpoint
-  router.post('/register', async (req, res) => {
-    const { name, email, password, role } = req.body;
-
-    try {
-      // Check if user already exists
-      const { data: existingUser, error: findError } = await supabase
-        .from('users')
-        .select('*')
-        .eq('email', email)
-        .single();
-
-      if (existingUser) {
-        return res.status(400).json({ error: 'Email is already registered.' });
-      }
-
-      if (findError && findError.code !== 'PGRST116') {
-        // Handle Supabase errors that are not "no rows found"
-        throw findError;
-      }
-
-      // Encrypt password
-      const hashedPassword = bcrypt.hashSync(password, 10);
-
-      // Insert new user
-      const { data, error } = await supabase.from('users').insert([
-        {
-          name,
-          email,
-          password: hashedPassword,
-          role: role || 'penghuni', // Default role is 'penghuni'
-        },
-      ]);
-
-      if (error) {
-        throw error;
-      }
-
-      res.status(201).json({ message: 'Registration successful.', user: data });
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: 'Internal server error.' });
-    }
-  });
-
   // Login endpoint
-  router.post('/login', async (req, res) => {
-    const { email, password } = req.body;
+  router.get('/login', async (req, res) => {
+    const { email, password } = req.query;
 
     try {
       const { data, error } = await supabase
