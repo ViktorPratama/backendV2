@@ -19,7 +19,7 @@ const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY
 console.log('Supabase initialized:', supabase);
 
 app.use(cors({
-  origin: 'https://rantaucash.vercel.app',  // Corrected to remove the trailing slash
+  origin: 'https://rantaucash-v2.vercel.app',  // Corrected to remove the trailing slash
   methods: ['GET', 'POST', 'PUT', 'DELETE'], // Corrected to explicitly define allowed methods
   allowedHeaders: ['Content-Type', 'Authorization'], // Corrected to define allowed headers
 }));
